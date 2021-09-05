@@ -189,7 +189,7 @@ resource "aws_route_table_association" "public_association" {
 
   count = var.enable_eks_public_subnet == "true" ? length(var.public_azs_with_cidr) : 0
 
-  route_table_id = aws_route_table.public.id
+  route_table_id = aws_route_table.public.*.id[0]
   subnet_id      = aws_subnet.public.*.id[count.index]
 }
 
