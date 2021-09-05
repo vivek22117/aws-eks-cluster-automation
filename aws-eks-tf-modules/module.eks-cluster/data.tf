@@ -5,7 +5,7 @@ data "terraform_remote_state" "eks_vpc" {
   backend = "s3"
 
   config = {
-    bucket = "${var.s3_bucket_prefix}-${var.environment}-${var.default_region}"
+    bucket = "${var.tfstate_s3_bucket_prefix}-tfstate-${var.default_region}"
     key    = "state/${var.environment}/eks-vpc/terraform.tfstate"
     region = var.default_region
   }
