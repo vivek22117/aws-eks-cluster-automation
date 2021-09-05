@@ -75,7 +75,7 @@ resource "aws_security_group" "ecs_s3_endpoint_sg" {
     from_port       = 443
     to_port         = 443
     protocol        = "tcp"
-    prefix_list_ids = [aws_vpc_endpoint.s3_endpoint.*.prefix_list_id]
+    prefix_list_ids = flatten([aws_vpc_endpoint.s3_endpoint.*.prefix_list_id])
   }
   tags = merge(local.common_tags, map("Name", "${var.environment}-ecs-s3-endpoint-sg"))
 }
