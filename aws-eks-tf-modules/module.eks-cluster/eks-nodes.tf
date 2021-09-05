@@ -10,7 +10,7 @@ resource "tls_private_key" "eks_admin_host_ssh_data" {
 }
 
 resource "aws_key_pair" "ssh_key" {
-  key_name   = "bastion-key"
+  key_name   = "eks-admin-key"
   public_key = var.ssh_public_key == "" ? tls_private_key.eks_admin_host_ssh_data.public_key_openssh : var.ssh_public_key
 
   tags = merge(local.common_tags, map("Name", "eks-nodes-ssh-key"))
@@ -25,7 +25,7 @@ resource "aws_eks_node_group" "eks_private_ng" {
 
   node_group_name = var.pvt_node_group_name
   node_role_arn   = aws_iam_role.eks_nodes_role.arn
-  subnet_ids      = data.terraform_remote_state.eks_vpc.outputs.private_subnets
+  subnet_ids      = local.pvt_nodeGroup_subnets
   ami_type        = var.ami_type
   disk_size       = var.disk_size
   instance_types  = var.instance_types
@@ -82,7 +82,7 @@ resource "aws_eks_node_group" "eks_public_ng" {
 
   node_group_name = var.pub_node_group_name
   node_role_arn   = aws_iam_role.eks_nodes_role.arn
-  subnet_ids      = data.terraform_remote_state.eks_vpc.outputs.public_subnets
+  subnet_ids      = local.pub_nodeGroup_subnets
   ami_type        = var.ami_type
   disk_size       = var.disk_size
   instance_types  = var.instance_types

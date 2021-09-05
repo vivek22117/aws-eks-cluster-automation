@@ -44,6 +44,8 @@ module "eks-vpc" {
   ssh_public_key = var.ssh_public_key
   ssh_source_sg  = var.ssh_source_sg
   vpc_cidr       = var.vpc_cidr
+  pub_subnet_ids = var.pub_subnet_ids
+  pvt_subnet_ids = var.pvt_subnet_ids
 
   tfstate_s3_bucket_prefix = var.tfstate_s3_bucket_prefix
 }

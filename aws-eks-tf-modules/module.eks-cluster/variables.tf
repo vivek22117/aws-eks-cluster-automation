@@ -24,10 +24,14 @@ variable "common_tags" {
   default     = {}
 }
 
-variable "subnets" {
-  type        = list(string)
-  description = "A list of subnets to place the EKS workers within."
-  default     = []
+variable "pvt_subnet_ids" {
+  type = list(string)
+  description = "A list of subnets to place EKS private NodeGroup"
+}
+
+variable "pub_subnet_ids" {
+  type = list(string)
+  description = "A list of subnets to place EKS public NodeGroup"
 }
 
 variable "cluster_endpoint_public_access_cidrs" {

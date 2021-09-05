@@ -1,8 +1,9 @@
 #####=============Local variables===============#####
 locals {
   common_tags = var.common_tags
-  eks_subnets = length(var.subnets) > 0 ? var.subnets : flatten([data.terraform_remote_state.eks_vpc.outputs.private_subnets,
-  data.terraform_remote_state.eks_vpc.outputs.public_subnets])
+  pvt_nodeGroup_subnets = length(var.pvt_subnet_ids) > 0 ? var.pvt_subnet_ids : data.terraform_remote_state.eks_vpc.outputs.private_subnets
+  pub_nodeGroup_subnets = length(var.pub_subnet_ids) > 0 ? var.pub_subnet_ids : data.terraform_remote_state.eks_vpc.outputs.public_subnets
+  eks_subnets = flatten([local.pvt_nodeGroup_subnets, local.pub_nodeGroup_subnets])
 
   eks_cluster_name = var.cluster_name == null ? data.terraform_remote_state.eks_vpc.outputs.eks_cluster_name : var.cluster_name
 }

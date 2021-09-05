@@ -9,7 +9,7 @@ variable "default_region" {
 variable "cluster_name" {
   type        = string
   description = "Name of EKS cluster"
-  default     = null
+  default = null
 }
 
 variable "cluster_log_kms_key_id" {
@@ -24,10 +24,14 @@ variable "common_tags" {
   default     = {}
 }
 
-variable "subnets" {
-  type        = list(string)
-  description = "A list of subnets to place the EKS workers within."
-  default     = []
+variable "pvt_subnet_ids" {
+  type = list(string)
+  description = "A list of subnets to place EKS private NodeGroup"
+}
+
+variable "pub_subnet_ids" {
+  type = list(string)
+  description = "A list of subnets to place EKS public NodeGroup"
 }
 
 variable "cluster_endpoint_public_access_cidrs" {
@@ -141,12 +145,12 @@ variable "ami_release_version" {
 }
 
 variable "ssh_public_key" {
-  type        = string
+  type = string
   description = "SSH content for aws key pair"
 }
 
 variable "ssh_source_sg" {
-  type        = string
+  type = string
   description = "Security group Id from where we can SSH on EKS worker nodes and access EKS cluster via kubectl commands"
 }
 
@@ -161,7 +165,7 @@ variable "instance_types" {
 }
 
 variable "vpc_cidr" {
-  type        = string
+  type = string
   description = "VPC CIDR range where EKS workers are provisioned"
 }
 
@@ -210,5 +214,3 @@ variable "cluster_version" {
   type        = string
   description = "Desired Kubernetes master version."
 }
-
-
