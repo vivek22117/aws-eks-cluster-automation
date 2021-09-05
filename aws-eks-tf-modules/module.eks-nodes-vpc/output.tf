@@ -50,3 +50,7 @@ output "vpc_main_rt" {
 output "eks_bastion_sg_id" {
   value = aws_security_group.eks_admin_host_sg.id
 }
+
+output "eks_cluster_name" {
+  value = var.cluster_name
+}

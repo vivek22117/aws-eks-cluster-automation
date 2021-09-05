@@ -38,11 +38,14 @@ output "public_rt" {
   value = module.eks-vpc.public_rt
 }
 
-
 output "vpc_cidr_block" {
   value = module.eks-vpc.vpc_cidr_block
 }
 
 output "eks_bastion_sg_id" {
   value = module.eks-vpc.eks_bastion_sg_id
+}
+
+output "eks_cluster_name" {
+  value = module.eks-vpc.eks_cluster_name
 }
