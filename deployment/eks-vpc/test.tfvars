@@ -1,7 +1,7 @@
-default_region = "us-east-1"
+default_region           = "us-east-1"
 tfstate_s3_bucket_prefix = "training"
 
-cidr_block         = "10.11.0.0/20"                     # 4096 IPs, 10.2.0.0 - 10.2.15.255
+cidr_block         = "10.11.0.0/20" # 4096 IPs, 10.2.0.0 - 10.2.15.255
 instance_tenancy   = "default"
 enable_dns         = "true"
 support_dns        = "true"
@@ -33,7 +33,7 @@ isMonitoring = true
 
 cluster_name = "Learning-EKS"
 
-enable_vpc_endpoint = "true"
-enable_eks_pvt_subnet = "true"
+enable_vpc_endpoint      = "true"
+enable_eks_pvt_subnet    = "true"
 enable_eks_public_subnet = "true"
-enable_db_subnet = "true"
+enable_db_subnet         = "true"

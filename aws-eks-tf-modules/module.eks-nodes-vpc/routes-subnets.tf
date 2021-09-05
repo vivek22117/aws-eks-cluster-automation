@@ -134,7 +134,7 @@ resource "aws_nat_gateway" "nat_gateway" {
 # to the Internet                                    #
 ######################################################
 resource "aws_route_table" "private" {
-  count  = var.enable_eks_pvt_subnet == "true" ? length(var.private_azs_with_cidr) : 0
+  count = var.enable_eks_pvt_subnet == "true" ? length(var.private_azs_with_cidr) : 0
 
   vpc_id = aws_vpc.vpc.id
 

@@ -59,7 +59,7 @@ resource "aws_security_group" "vpce" {
 
 resource "aws_security_group" "ecs_s3_endpoint_sg" {
   depends_on = [aws_vpc_endpoint.s3_endpoint]
-  count = var.enable_vpc_endpoint == "true" ? 1 : 0
+  count      = var.enable_vpc_endpoint == "true" ? 1 : 0
 
   name   = "ecs-s3-endpoint-sg"
   vpc_id = aws_vpc.vpc.id

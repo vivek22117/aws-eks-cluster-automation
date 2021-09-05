@@ -57,22 +57,22 @@ variable "enable_nat_gateway" {
 }
 
 variable "enable_eks_public_subnet" {
-  type = string
+  type        = string
   description = "Flag for creating public subnet for EKS worker nodes"
 }
 
 variable "enable_eks_pvt_subnet" {
-  type = string
+  type        = string
   description = "Flag for creating private subnet for EKS worker nodes"
 }
 
 variable "enable_db_subnet" {
-  type = string
+  type        = string
   description = "Flag for creating private subnet for Database"
 }
 
 variable "enable_vpc_endpoint" {
-  type = string
+  type        = string
   description = "Flag to control the creation of VPC endpoints, S3, ECS Task, ECR, EC2, Cloudwatch"
 }
 
