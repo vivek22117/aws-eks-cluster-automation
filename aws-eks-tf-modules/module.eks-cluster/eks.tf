@@ -61,7 +61,7 @@ resource "aws_eks_cluster" "learning_eks_cluster" {
   # Otherwise, EKS will not be able to properly delete EKS managed EC2 infrastructure such as Security Groups.
   depends_on = [
     aws_security_group.eks_cluster,
-    aws_security_group_rule.eks_cluster_inbound_bastion,
+    aws_security_group_rule.eks_cluster_inbound_access,
     aws_iam_role_policy_attachment.aws_eks_cluster_policy,
     aws_iam_role_policy_attachment.aws_eks_service_policy,
     aws_cloudwatch_log_group.learning_eks_lg
