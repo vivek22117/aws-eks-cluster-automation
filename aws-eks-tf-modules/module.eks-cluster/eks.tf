@@ -4,7 +4,7 @@ locals {
   eks_subnets = length(var.subnets) > 0 ? var.subnets : flatten([data.terraform_remote_state.eks_vpc.outputs.private_subnets,
   data.terraform_remote_state.eks_vpc.outputs.public_subnets])
 
-  eks_cluster_name = var.cluster_name == null ? data.terraform_remote_state.eks_vpc.outputs : var.cluster_name
+  eks_cluster_name = var.cluster_name == null ? data.terraform_remote_state.eks_vpc.outputs.eks_cluster_id : var.cluster_name
 }
 
 
