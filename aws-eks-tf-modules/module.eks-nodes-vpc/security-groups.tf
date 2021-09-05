@@ -54,7 +54,7 @@ resource "aws_security_group" "vpce" {
     cidr_blocks = [aws_vpc.vpc.cidr_block]
   }
 
-  tags = merge(local.common_tags, map("Name", "${var.environment}-vpc-endpoint-sg"))
+  tags = merge(local.common_tags, map("Name", "eks-${var.environment}-vpc-endpoint-sg"))
 }
 
 resource "aws_security_group" "ecs_s3_endpoint_sg" {
@@ -77,7 +77,7 @@ resource "aws_security_group" "ecs_s3_endpoint_sg" {
     protocol        = "tcp"
     prefix_list_ids = flatten([aws_vpc_endpoint.s3_endpoint.*.prefix_list_id])
   }
-  tags = merge(local.common_tags, map("Name", "${var.environment}-ecs-s3-endpoint-sg"))
+  tags = merge(local.common_tags, map("Name", "eks-${var.environment}-ecs-s3-endpoint-sg"))
 }
 
 
