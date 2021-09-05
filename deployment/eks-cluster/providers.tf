@@ -3,7 +3,7 @@
 ####################################################
 provider "aws" {
   region = var.default_region
-//  profile = "default"
+  //  profile = "default"
 
   version = ">=2.28.0"
 }
@@ -40,7 +40,7 @@ terraform {
 
 
   backend "s3" {
-//    profile = "default"
+    //    profile = "default"
     region  = "us-east-1"
     encrypt = "true"
   }
