@@ -136,7 +136,7 @@ resource "aws_security_group_rule" "all_ports_eks_sg" {
 }
 
 ####################################################################
-#       Add Security Group Rule to acces EKS from Admin Host       #
+#       Add Security Group Rule to access EKS from Admin Host       #
 ####################################################################
 resource "aws_security_group_rule" "allow_https_ports_eks_admin_host" {
   depends_on = [aws_eks_cluster.learning_eks_cluster, aws_security_group.eks_cluster]
