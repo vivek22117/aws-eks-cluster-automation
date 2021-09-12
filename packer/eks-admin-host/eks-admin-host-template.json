@@ -1,7 +1,5 @@
 {
   "variables": {
-    "region" : "us-east-1",
-    "source_ami" : "ami-02354e95b39ca8dec",
     "terraform_version": "0.13.5",
     "kubectl_version": "1.20.4",
     "ami_name": "eks-admin-{{isotime `2006-01-02`}}"
@@ -9,14 +7,22 @@
   "builders": [{
     "type" : "amazon-ebs",
     "profile" : "cg-admin",
-    "region" : "{{user `region`}}",
+    "region" : "{{user `default_region`}}",
     "instance_type" : "t3a.small",
-    "source_ami" : "{{user `source_ami`}}",
+    "source_ami_filter": {
+      "filters": {
+        "virtualization-type": "hvm",
+        "name": "amzn2-ami-*-ebs",
+        "root-device-type": "ebs"
+      },
+      "owners": ["amazon"],
+      "most_recent": true
+    },
     "ssh_username" : "ec2-user",
     "ami_name" : "{{user `ami_name`}}",
     "ami_description" : "Amazon linux image for eks-admin",
     "run_tags" : {
-      "Name" : "packer-builder-bastion",
+      "Name" : "packer-builder-eks",
       "Project": "Learning-TF"
     },
     "tags" : {
