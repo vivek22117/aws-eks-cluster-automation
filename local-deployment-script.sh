@@ -100,6 +100,50 @@ function terraform_backend_deployment() {
 
 
 
+function deploy_vpc_network() {
+
+  if [ $AMI_FILTER_TYPE == 'self' ]; then
+    echo -e "You have decided to create AMI for EKS Administration Host."
+
+    echo -e "\n\n ====================== Creating EKS Admin host AMI using Packer ========================="
+    echo "Checking whether AMI exists"
+    BASTION_AMI_ID=$(aws ec2 describe-images --filters "Name=tag:Name,Values=EKS-Admin-Host-AMI" --query 'Images[*].ImageId' --region $AWS_REGION --profile default --output text)
+
+    if [ -z $BASTION_AMI_ID ]; then
+      echo "Creating AMI named eks-admin--YYYY-MM-DD using packer as it is being used in Terraform script"
+
+      cd packer/eks-admin-host
+      packer validate eks-admin-host-template.json
+      packer build -var "aws_profile=default" -var "default_region=$AWS_REGION"  -var "terraform_version=1.0.6" -var "kubectl_version=1.20.4" eks-admin-host-template.json
+      cd ../..
+    else
+      echo "AMI exits with id $BASTION_AMI_ID, now creating VPC resources.."
+    fi
+
+  fi
+
+
+    echo -e "\n\n ========================= Starting vpc network deployment using TF ====================="
+
+    cd deployment/vpc
+
+    sed -i '/profile/s/^#//g' providers.tf
+    sed -i "s/us-east-1/$AWS_REGION/g" providers.tf
+    sed -i "s/us-east-1/$AWS_REGION/g" config/$ENV-backend-config.config
+
+    terraform init -backend-config="config/$ENV-backend-config.config" \
+    -backend-config="bucket=$ENV-tfstate-$AWS_ACCOUNT_ID-$AWS_REGION" -reconfigure
+
+    terraform plan -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV" -var="ami_filter_type=$AMI_FILTER_TYPE"
+    terraform apply -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV" -var="ami_filter_type=$AMI_FILTER_TYPE" -auto-approve
+
+    cd ../..
+
+    echo -e "============================== Completed ================================================ \n\n"
+}
+
+
+
 
 if [ $EXEC_TYPE == 'apply' ]; then
 
