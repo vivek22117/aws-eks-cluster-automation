@@ -28,5 +28,4 @@ module "eks-vpc" {
   enable_eks_public_subnet = var.enable_eks_public_subnet
   enable_eks_pvt_subnet    = var.enable_eks_pvt_subnet
   enable_vpc_endpoint      = var.enable_vpc_endpoint
-  tfstate_s3_bucket_prefix = var.tfstate_s3_bucket_prefix
 }

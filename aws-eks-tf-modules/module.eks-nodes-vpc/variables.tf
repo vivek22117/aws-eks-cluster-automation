@@ -76,14 +76,6 @@ variable "enable_vpc_endpoint" {
   description = "Flag to control the creation of VPC endpoints, S3, ECS Task, ECR, EC2, Cloudwatch"
 }
 
-#########################################################
-# Default variables for backend and SSH key for Bastion #
-#########################################################
-variable "tfstate_s3_bucket_prefix" {
-  type        = string
-  description = "Prefix for s3 bucket"
-}
-
 ######################################################
 # Local variables defined                            #
 ######################################################
