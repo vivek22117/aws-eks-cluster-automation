@@ -75,14 +75,6 @@ variable "launch_template" {
   default     = {}
 }
 
-#########################################################
-# Default variables for backend and SSH key for Bastion #
-#########################################################
-variable "tfstate_s3_bucket_prefix" {
-  type        = string
-  description = "Prefix for s3 bucket"
-}
-
 ######################################################
 # Local variables defined                            #
 ######################################################
