@@ -1,3 +1,13 @@
+data "aws_availability_zones" "available" {}
+
+locals {
+  list_of_azs = data.aws_availability_zones.available.names
+
+  total_azs = length(data.aws_availability_zones.available.names)
+  used_azs = local.total_azs > 3 ? 3 : local.total_azs
+}
+
+
 ######################################################
 # NAT gateways  enable instances in a private subnet #
 # to connect to the Internet or other AWS services,  #
@@ -23,15 +33,15 @@ resource "aws_eip" "nat_eip" {
 # Each subnet in a different AZ                      #
 ######################################################
 resource "aws_subnet" "public" {
-  count = var.enable_eks_public_subnet == "true" ? length(var.public_azs_with_cidr) : 0
+  count = var.enable_eks_public_subnet == "true" ? local.used_azs : 0
 
-  cidr_block              = values(var.public_azs_with_cidr)[count.index]
+  cidr_block              = var.public_azs_with_cidr[count.index]
   vpc_id                  = aws_vpc.vpc.id
-  availability_zone       = keys(var.public_azs_with_cidr)[count.index]
+  availability_zone       = local.list_of_azs[count.index]
   map_public_ip_on_launch = true
 
   tags = merge(local.common_tags, {
-    Name                                            = "eks-${var.environment}-pub-${element(keys(var.public_azs_with_cidr), count.index)}"
+    Name                                            = "eks-${var.environment}-pub-${element(local.list_of_azs, count.index)}"
     "kubernetes.io/cluster/${var.cluster_name}"     = "shared"
     "kubernetes.io/role/elb"                        = "1",
     "k8s.io/cluster-autoscaler/${var.cluster_name}" = "true",
@@ -51,15 +61,15 @@ resource "aws_subnet" "public" {
 # Each subnet in a different AZ                      #
 ######################################################
 resource "aws_subnet" "private" {
-  count = var.enable_eks_pvt_subnet == "true" ? length(var.private_azs_with_cidr) : 0
+  count = var.enable_eks_pvt_subnet == "true" ? local.used_azs : 0
 
-  cidr_block              = values(var.private_azs_with_cidr)[count.index]
+  cidr_block              = var.private_azs_with_cidr[count.index]
   vpc_id                  = aws_vpc.vpc.id
-  availability_zone       = keys(var.private_azs_with_cidr)[count.index]
+  availability_zone       = local.list_of_azs[count.index]
   map_public_ip_on_launch = false
 
   tags = merge(local.common_tags, {
-    Name                                            = "eks-${var.environment}-pvt-${element(keys(var.private_azs_with_cidr), count.index)}"
+    Name                                            = "eks-${var.environment}-pvt-${element(local.list_of_azs, count.index)}"
     "kubernetes.io/cluster/${var.cluster_name}"     = "shared"
     "kubernetes.io/role/internal-elb"               = "1"
     "k8s.io/cluster-autoscaler/${var.cluster_name}" = "true",
@@ -79,15 +89,15 @@ resource "aws_subnet" "private" {
 # Each subnet in a different AZ                      #
 ######################################################
 resource "aws_subnet" "db_subnet" {
-  count = var.enable_db_subnet == "true" ? length(var.db_azs_with_cidr) : 0
+  count = var.enable_db_subnet == "true" ? local.used_azs : 0
 
-  cidr_block              = values(var.db_azs_with_cidr)[count.index]
+  cidr_block              = var.db_azs_with_cidr[count.index]
   vpc_id                  = aws_vpc.vpc.id
-  availability_zone       = keys(var.db_azs_with_cidr)[count.index]
+  availability_zone       = local.list_of_azs[count.index]
   map_public_ip_on_launch = false
 
   tags = merge(local.common_tags, {
-    "Name" = "eks-${var.environment}-db-${element(keys(var.db_azs_with_cidr), count.index)}"
+    "Name" = "eks-${var.environment}-db-${element(local.list_of_azs, count.index)}"
   })
 
   lifecycle {
@@ -134,7 +144,7 @@ resource "aws_nat_gateway" "nat_gateway" {
 # to the Internet                                    #
 ######################################################
 resource "aws_route_table" "private" {
-  count = var.enable_eks_pvt_subnet == "true" ? length(var.private_azs_with_cidr) : 0
+  count = var.enable_eks_pvt_subnet == "true" ? local.used_azs : 0
 
   vpc_id = aws_vpc.vpc.id
 
@@ -146,7 +156,7 @@ resource "aws_route_table" "private" {
 }
 
 resource "aws_route" "private_nat_gateway_route" {
-  count = var.enable_nat_gateway == "true" && var.enable_eks_pvt_subnet == "true" ? length(var.private_azs_with_cidr) : 0
+  count = var.enable_nat_gateway == "true" && var.enable_eks_pvt_subnet == "true" ? local.used_azs : 0
 
   route_table_id         = aws_route_table.private.*.id[count.index]
   destination_cidr_block = "0.0.0.0/0"
@@ -156,7 +166,7 @@ resource "aws_route" "private_nat_gateway_route" {
 resource "aws_route_table_association" "private_association" {
   depends_on = [aws_route_table.private, aws_subnet.private]
 
-  count = length(aws_route_table.private.*.id)
+  count = local.used_azs
 
   route_table_id = aws_route_table.private.*.id[count.index]
   subnet_id      = aws_subnet.private.*.id[count.index]
@@ -187,7 +197,7 @@ resource "aws_route_table" "public" {
 resource "aws_route_table_association" "public_association" {
   depends_on = [aws_route_table.public, aws_subnet.public]
 
-  count = var.enable_eks_public_subnet == "true" ? length(var.public_azs_with_cidr) : 0
+  count = var.enable_eks_public_subnet == "true" ? local.used_azs : 0
 
   route_table_id = aws_route_table.public.*.id[0]
   subnet_id      = aws_subnet.public.*.id[count.index]
