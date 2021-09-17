@@ -53,6 +53,16 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
 
+
+      - name: Run aws cli to fetch Account Id
+        id: aws_details
+        run: |
+          ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
+          echo AWS_ACCOUNT=$ACCOUNT_ID >> $GITHUB_ENV
+          CURRENT_REGION=$(aws ec2 describe-availability-zones --query 'AvailabilityZones[0].[RegionName]' --output text)
+          echo AWS_REGION=$CURRENT_REGION >> $GITHUB_ENV
+
+
       - name: Terraform Init For EKS Cluster Resources
         uses: hashicorp/terraform-github-actions@master
         with:
@@ -60,7 +70,7 @@ jobs:
           tf_actions_working_dir: ${{ env.tf_working_dir_app }}
           tf_actions_subcommand: 'init'
           tf_actions_comment: false
-          args: '-backend-config="backend-config-${{ env.environment }}.config'
+          args: '-backend-config="backend-config-${{ env.environment }}.config" -backend-config="bucket=${{ env.environment }}-eks-tfstate-${{ env.AWS_ACCOUNT }}-${{ env.AWS_REGION }}"'
 
 
       - name: 'Terraform Validate'
