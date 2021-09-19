@@ -13,7 +13,7 @@ common_tags = {
 }
 
 #####=======Please provide below values to use already available VPC for EKS NodeGroup/Workers=========#####
-vpc_cidr        = null
+vpc_cidr       = null
 pvt_subnet_ids = []
 pub_subnet_ids = []
 #####===================================================================================================#####
