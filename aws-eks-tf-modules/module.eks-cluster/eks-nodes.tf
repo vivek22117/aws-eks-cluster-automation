@@ -32,8 +32,8 @@ resource "aws_eks_node_group" "eks_private_ng" {
   capacity_type   = "ON_DEMAND"
 
   force_update_version = false
-  labels = var.node_labels
-  release_version = var.ami_release_version
+  labels               = var.node_labels
+  release_version      = var.ami_release_version
 
   scaling_config {
     desired_size = var.pvt_desired_size
@@ -89,8 +89,8 @@ resource "aws_eks_node_group" "eks_public_ng" {
   capacity_type   = "ON_DEMAND"
 
   force_update_version = false
-  labels = var.node_labels
-  release_version = var.ami_release_version
+  labels               = var.node_labels
+  release_version      = var.ami_release_version
 
   scaling_config {
     desired_size = var.public_desired_size

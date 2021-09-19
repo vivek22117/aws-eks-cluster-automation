@@ -1,5 +1,5 @@
 locals {
-  eks_access_sg = var.ssh_source_sg == null ? data.terraform_remote_state.eks_vpc.outputs.eks_bastion_sg_id : var.ssh_source_sg
+  eks_access_sg     = var.ssh_source_sg == null ? data.terraform_remote_state.eks_vpc.outputs.eks_bastion_sg_id : var.ssh_source_sg
   eks_node_vpc_cidr = var.vpc_cidr == null ? data.terraform_remote_state.eks_vpc.outputs.vpc_cidr_block : var.vpc_cidr
 }
 
@@ -8,7 +8,7 @@ locals {
 #       EKS Cluster Security Group              #
 #################################################
 resource "aws_security_group" "eks_cluster" {
-  name        = "eks-cluster-${var.environment}-sg"
+  name = "eks-cluster-${var.environment}-sg"
 
   description = "Cluster communication with worker nodes"
   vpc_id      = data.terraform_remote_state.eks_vpc.outputs.vpc_id

@@ -1,9 +1,9 @@
 #####=============Local variables===============#####
 locals {
-  common_tags = var.common_tags
+  common_tags           = var.common_tags
   pvt_nodeGroup_subnets = length(var.pvt_subnet_ids) > 0 ? var.pvt_subnet_ids : data.terraform_remote_state.eks_vpc.outputs.private_subnets
   pub_nodeGroup_subnets = length(var.pub_subnet_ids) > 0 ? var.pub_subnet_ids : data.terraform_remote_state.eks_vpc.outputs.public_subnets
-  eks_subnets = flatten([local.pvt_nodeGroup_subnets, local.pub_nodeGroup_subnets])
+  eks_subnets           = flatten([local.pvt_nodeGroup_subnets, local.pub_nodeGroup_subnets])
 
   eks_cluster_name = var.cluster_name == null ? data.terraform_remote_state.eks_vpc.outputs.eks_cluster_name : var.cluster_name
 }
@@ -16,7 +16,7 @@ resource "aws_cloudwatch_log_group" "learning_eks_lg" {
   retention_in_days = var.log_retention
   kms_key_id        = var.cluster_log_kms_key_id
 
-  tags              = merge(local.common_tags, map("Name", "eks-${var.environment}-lg"))
+  tags = merge(local.common_tags, map("Name", "eks-${var.environment}-lg"))
 }
 
 ###########################################
