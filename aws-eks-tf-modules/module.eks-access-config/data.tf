@@ -6,7 +6,7 @@ data "terraform_remote_state" "eks_vpc" {
   backend = "s3"
 
   config = {
-    bucket = "${var.s3_bucket_prefix}-tfstate-${var.default_region}"
+    bucket = "${var.environment}-eks-tfstate-${data.aws_caller_identity.current.account_id}-${var.default_region}"
     key    = "state/${var.environment}/eks-vpc/terraform.tfstate"
     region = var.default_region
   }
@@ -17,7 +17,7 @@ data "terraform_remote_state" "eks_cluster" {
   backend = "s3"
 
   config = {
-    bucket = "${var.s3_bucket_prefix}-tfstate-${var.default_region}"
+    bucket = "${var.environment}-eks-tfstate-${data.aws_caller_identity.current.account_id}-${var.default_region}"
     key    = "state/${var.environment}/eks-cluster/terraform.tfstate"
     region = var.default_region
   }
@@ -27,7 +27,7 @@ data "terraform_remote_state" "s3_buckets" {
   backend = "s3"
 
   config = {
-    bucket = "${var.s3_bucket_prefix}-tfstate-${var.default_region}"
+    bucket = "${var.environment}-tfstate-${data.aws_caller_identity.current.account_id}-${var.default_region}"
     key    = "state/${var.environment}/s3-buckets/terraform.tfstate"
     region = var.default_region
   }
