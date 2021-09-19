@@ -1,12 +1,12 @@
 provider "aws" {
-  region  = var.default_region
-#  profile = "default"
+  region = var.default_region
+  #  profile = "default"
 }
 
 terraform {
   required_providers {
     aws = {
-      source = "hashicorp/aws"
+      source  = "hashicorp/aws"
       version = ">=3.3.0"
     }
   }
@@ -14,9 +14,9 @@ terraform {
   required_version = ">= 0.13"
 
   backend "s3" {
-#    profile        = "default"
-    region         = "us-east-1"
-    encrypt        = "true"
+    #    profile        = "default"
+    region  = "us-east-1"
+    encrypt = "true"
   }
 }
 
