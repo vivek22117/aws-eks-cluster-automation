@@ -8,9 +8,9 @@ support_dns        = "true"
 enable_nat_gateway = "true"
 db_subnet_gp       = "eks-dbsubnet-group"
 
-public_azs_with_cidr = ["10.2.0.0/24","10.2.2.0/24","10.2.4.0/24"]
-private_azs_with_cidr = ["10.2.1.0/24","10.2.3.0/24","10.2.5.0/24"]
-db_azs_with_cidr = ["10.2.6.0/24","10.2.7.0/24","10.2.8.0/24"]
+public_azs_with_cidr  = ["10.2.0.0/24", "10.2.2.0/24", "10.2.4.0/24"]
+private_azs_with_cidr = ["10.2.1.0/24", "10.2.3.0/24", "10.2.5.0/24"]
+db_azs_with_cidr      = ["10.2.6.0/24", "10.2.7.0/24", "10.2.8.0/24"]
 
 team         = "Learning-Team"
 owner        = "Vivek"
