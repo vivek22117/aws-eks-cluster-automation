@@ -143,7 +143,69 @@ function deploy_eks_vpc_network() {
 }
 
 
+function deploy_eks_cluster_resources() {
+  echo -e "\n\n ========================= Starting eks cluster deployment using TF ====================="
 
+  cd deployment/eks-cluster
+
+  sed -i '/profile/s/^#//g' providers.tf
+  sed -i "s/us-east-1/$AWS_REGION/g" providers.tf
+  sed -i "s/us-east-1/$AWS_REGION/g" config/$ENV-backend-config.config
+
+  terraform init -backend-config="config/$ENV-backend-config.config" \
+  -backend-config="bucket=$ENV-tfstate-$AWS_ACCOUNT_ID-$AWS_REGION" -reconfigure
+
+  terraform plan -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV" -var="ami_filter_type=$AMI_FILTER_TYPE"
+  terraform apply -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV" -var="ami_filter_type=$AMI_FILTER_TYPE" -auto-approve
+
+  cd ../..
+
+  echo -e "============================== Completed ================================================ \n\n"
+}
+
+
+
+function deploy_eks_access_config() {
+  echo -e "\n\n ========================= Starting eks access config deployment using TF ====================="
+
+  cd deployment/eks-access-config
+
+  sed -i '/profile/s/^#//g' providers.tf
+  sed -i "s/us-east-1/$AWS_REGION/g" providers.tf
+  sed -i "s/us-east-1/$AWS_REGION/g" config/$ENV-backend-config.config
+
+  terraform init -backend-config="config/$ENV-backend-config.config" \
+  -backend-config="bucket=$ENV-tfstate-$AWS_ACCOUNT_ID-$AWS_REGION" -reconfigure
+
+  terraform plan -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV" -var="ami_filter_type=$AMI_FILTER_TYPE"
+  terraform apply -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV" -var="ami_filter_type=$AMI_FILTER_TYPE" -auto-approve
+
+  cd ../..
+
+  echo -e "============================== Completed ================================================ \n\n"
+}
+
+
+
+function deploy_eks_irsa_resources() {
+  echo -e "\n\n ========================= Starting eks IRSA resources deployment using TF ====================="
+
+  cd deployment/eks-irsa
+
+  sed -i '/profile/s/^#//g' providers.tf
+  sed -i "s/us-east-1/$AWS_REGION/g" providers.tf
+  sed -i "s/us-east-1/$AWS_REGION/g" config/$ENV-backend-config.config
+
+  terraform init -backend-config="config/$ENV-backend-config.config" \
+  -backend-config="bucket=$ENV-tfstate-$AWS_ACCOUNT_ID-$AWS_REGION" -reconfigure
+
+  terraform plan -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV" -var="ami_filter_type=$AMI_FILTER_TYPE"
+  terraform apply -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV" -var="ami_filter_type=$AMI_FILTER_TYPE" -auto-approve
+
+  cd ../..
+
+  echo -e "============================== Completed ================================================ \n\n"
+}
 
 
 
@@ -160,6 +222,42 @@ if [ $EXEC_TYPE == 'apply' ]; then
 
   if [ $ENABLE == 'Yes' ]; then
     deploy_eks_vpc_network
+  fi
+
+
+  PS3="Do you want to deploy EKS Cluster resources? "
+  select ENABLE in Yes No
+  do
+    echo "You decision is $ENABLE to deploy EKS Cluster resources!"
+    break
+  done
+
+  if [ $ENABLE == 'Yes' ]; then
+    deploy_eks_cluster_resources
+  fi
+
+
+  PS3="Do you want to deploy EKS Access Config? It will update aws-auth config file, and creates EKS Admin host."
+  select ENABLE in Yes No
+  do
+    echo "You decision is $ENABLE to deploy EKS Config resources!"
+    break
+  done
+
+  if [ $ENABLE == 'Yes' ]; then
+    deploy_eks_access_config
+  fi
+
+
+  PS3="Do you want to deploy EKS IRSA resources? It will create Service Account and IAM Role"
+  select ENABLE in Yes No
+  do
+    echo "You decision is $ENABLE to deploy EKS Config resources!"
+    break
+  done
+
+  if [ $ENABLE == 'Yes' ]; then
+    deploy_eks_irsa_resources
   fi
 
 
