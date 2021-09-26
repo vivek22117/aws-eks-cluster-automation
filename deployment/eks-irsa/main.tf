@@ -1,5 +1,5 @@
 ####################################################
-#        EKS Access Infra module configuration     #
+#        EKS IRSA module configuration     #
 ####################################################
 module "eks_irsa" {
   source = "../../aws-eks-tf-modules/module.eks-irsa"
