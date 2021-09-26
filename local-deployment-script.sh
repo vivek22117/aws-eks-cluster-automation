@@ -123,7 +123,7 @@ function deploy_eks_vpc_network() {
   fi
 
 
-    echo -e "\n\n ========================= Starting eks vpc network deployment using TF ====================="
+    echo -e "\n\n ========================= Starting EKS vpc network deployment using TF ====================="
 
     cd deployment/eks-vpc
 
@@ -144,7 +144,7 @@ function deploy_eks_vpc_network() {
 
 
 function deploy_eks_cluster_resources() {
-  echo -e "\n\n ========================= Starting eks cluster deployment using TF ====================="
+  echo -e "\n\n ========================= Starting EKS cluster deployment using TF ====================="
 
   cd deployment/eks-cluster
 
@@ -166,7 +166,7 @@ function deploy_eks_cluster_resources() {
 
 
 function deploy_eks_access_config() {
-  echo -e "\n\n ========================= Starting eks access config deployment using TF ====================="
+  echo -e "\n\n ========================= Starting EKS access config deployment using TF ====================="
 
   cd deployment/eks-access-config
 
@@ -188,7 +188,7 @@ function deploy_eks_access_config() {
 
 
 function deploy_eks_irsa_resources() {
-  echo -e "\n\n ========================= Starting eks IRSA resources deployment using TF ====================="
+  echo -e "\n\n ========================= Starting EKS IRSA resources deployment using TF ====================="
 
   cd deployment/eks-irsa
 
