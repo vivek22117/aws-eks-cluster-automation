@@ -208,6 +208,28 @@ function deploy_eks_irsa_resources() {
 }
 
 
+function deploy_eks_container_insights_resources() {
+  echo -e "\n\n ========================= Starting EKS container insights resources deployment using TF ====================="
+
+  cd deployment/eks-container-insights
+
+  sed -i '/profile/s/^#//g' providers.tf
+  sed -i "s/us-east-1/$AWS_REGION/g" providers.tf
+  sed -i "s/us-east-1/$AWS_REGION/g" config/$ENV-backend-config.config
+
+  terraform init -backend-config="config/$ENV-backend-config.config" \
+  -backend-config="bucket=$ENV-tfstate-$AWS_ACCOUNT_ID-$AWS_REGION" -reconfigure
+
+  terraform plan -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV" -var="ami_filter_type=$AMI_FILTER_TYPE"
+  terraform apply -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV" -var="ami_filter_type=$AMI_FILTER_TYPE" -auto-approve
+
+  cd ../..
+
+  echo -e "============================== Completed ================================================ \n\n"
+}
+
+
+
 
 if [ $EXEC_TYPE == 'apply' ]; then
 
@@ -258,6 +280,18 @@ if [ $EXEC_TYPE == 'apply' ]; then
 
   if [ $ENABLE == 'Yes' ]; then
     deploy_eks_irsa_resources
+  fi
+
+
+  PS3="Do you want to deploy EKS Container Insights resources? It will create PODs in the Cluster"
+  select ENABLE in Yes No
+  do
+    echo "You decision is $ENABLE to deploy EKS Container Insights resources!"
+    break
+  done
+
+  if [ $ENABLE == 'Yes' ]; then
+    deploy_eks_container_insights_resources
   fi
 
 
