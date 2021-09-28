@@ -10,6 +10,11 @@ variable "default_region" {
 #########################################################
 #              Variables for EKS Bastion                #
 #########################################################
+variable "ami_filter_type" {
+  type = string
+  description = "AMI filter type, valid values 'self', 'amazon'"
+}
+
 variable "eks_bastion_name_prefix" {
   type        = string
   description = "EKS bastion name prefix"
