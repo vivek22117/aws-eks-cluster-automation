@@ -4,12 +4,12 @@
 resource "aws_launch_template" "eks_bastion_lt" {
   name_prefix = "${var.eks_bastion_name_prefix}${var.environment}"
 
-  image_id                             = data.aws_ami.eks_bastion.id
+  image_id                             = data.aws_ami.eks_admin_host.id
   key_name                             = data.terraform_remote_state.s3_buckets.outputs.eks_bastion_key_name
   instance_type                        = var.bastion_instance_type
   instance_initiated_shutdown_behavior = "terminate"
 
-  user_data = base64encode(data.template_file.eks_bastion_user_data.rendered)
+  user_data = base64encode(data.template_file.eks_admin_host_user_data.rendered)
 
   iam_instance_profile {
     name = aws_iam_instance_profile.bastion_host_profile.name
@@ -38,7 +38,7 @@ resource "aws_launch_template" "eks_bastion_lt" {
 
   tag_specifications {
     resource_type = "instance"
-    tags          = merge(local.common_tags, map("Project", "DoubleDigit-Solutions"))
+    tags          = merge(local.common_tags, map("Project", "LearningTF"))
   }
 }
 

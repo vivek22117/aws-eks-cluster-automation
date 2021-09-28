@@ -103,11 +103,11 @@ variable "custom_tags" {
   type        = map(string)
   default = {
     owner      = "vivek"
-    team       = "doubledigit-solutions"
+    team       = "LearningTeam"
     tool       = "Terraform"
     monitoring = "true"
     Name       = "EKS-Bastion-Host"
-    Project    = "DoubleDigit-Solutions"
+    Project    = "LearningTF"
   }
 }
 
