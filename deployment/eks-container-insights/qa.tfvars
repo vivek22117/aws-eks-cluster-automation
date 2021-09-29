@@ -2,11 +2,11 @@ default_region = "us-east-1"
 
 team         = "LearningTeam"
 owner        = "Vivek"
-isMonitoring  = true
-project     = "LearningTF"
-component = "Managed-EKS-ContainerInsights"
+isMonitoring = true
+project      = "LearningTF"
+component    = "Managed-EKS-ContainerInsights"
 
-enabled = true
+enabled  = true
 oidc_url = ""
 oidc_arn = ""
 helm = {

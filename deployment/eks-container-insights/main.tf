@@ -12,10 +12,10 @@ module "eks_container_insights" {
   owner          = var.owner
   team           = var.team
 
-  enabled         = var.enabled
-  oidc_arn        = var.oidc_arn
-  oidc_url        = var.oidc_url
+  enabled  = var.enabled
+  oidc_arn = var.oidc_arn
+  oidc_url = var.oidc_url
 
-  helm = var.helm
+  helm         = var.helm
   cluster_name = var.cluster_name
 }
