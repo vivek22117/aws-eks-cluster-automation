@@ -45,7 +45,7 @@ data "template_file" "eks_admin_host_user_data" {
   template = file("${path.module}/data-scripts/configure-eks.sh")
 
   vars = {
-    eks_create_role_arn     = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/eks-creator"
+    eks_create_role_arn     = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.eks_creator_role}"
     cluster_name            = data.terraform_remote_state.eks_cluster.outputs.eks_cluster_id
     default_region          = var.default_region
     artifactory_bucket_name = data.terraform_remote_state.s3_buckets.outputs.artifactory_s3_name

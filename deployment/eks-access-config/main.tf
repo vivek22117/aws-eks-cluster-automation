@@ -24,6 +24,7 @@ module "eks_access_infra" {
   termination_policies             = var.termination_policies
 
   eks_iam_group = var.eks_iam_group
+  eks_creator_role = var.eks_creator_role
 
 
   apply_config_map_aws_auth   = var.apply_config_map_aws_auth
