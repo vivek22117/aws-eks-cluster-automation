@@ -10,7 +10,7 @@ component    = "DataStorage"
 bucket_config = {
 
   "artifactory_bucket" = {
-    bucket_prefix = "artifactory"
+    bucket_prefix = "eks-artifactory"
     bucket_acl = "private"
     fore_destroy = false
     acceleration_status = "Suspended"
@@ -33,7 +33,7 @@ bucket_config = {
   },
 
   "logging_bucket" = {
-    bucket_prefix = "logging"
+    bucket_prefix = "eks-logging"
     bucket_acl = "private"
     fore_destroy = false
     acceleration_status = "Suspended"
@@ -56,7 +56,7 @@ bucket_config = {
   },
 
   "datalake_bucket" = {
-    bucket_prefix = "datalake"
+    bucket_prefix = "eks-datalake"
     bucket_acl = "private"
     fore_destroy = false
     acceleration_status = "Suspended"
