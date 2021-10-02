@@ -216,10 +216,10 @@ function deploy_eks_irsa_resources() {
   sed -i "s/us-east-1/$AWS_REGION/g" config/$ENV-backend-config.config
 
   terraform init -backend-config="config/$ENV-backend-config.config" \
-  -backend-config="bucket=$ENV-tfstate-$AWS_ACCOUNT_ID-$AWS_REGION" -reconfigure
+  -backend-config="bucket=$ENV-eks-tfstate-$AWS_ACCOUNT_ID-$AWS_REGION" -reconfigure
 
-  terraform plan -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV" -var="ami_filter_type=$AMI_FILTER_TYPE"
-  terraform apply -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV" -var="ami_filter_type=$AMI_FILTER_TYPE" -auto-approve
+  terraform plan -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV"
+  terraform apply -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV" -auto-approve
 
   cd ../..
 
@@ -237,10 +237,10 @@ function deploy_eks_container_insights_resources() {
   sed -i "s/us-east-1/$AWS_REGION/g" config/$ENV-backend-config.config
 
   terraform init -backend-config="config/$ENV-backend-config.config" \
-  -backend-config="bucket=$ENV-tfstate-$AWS_ACCOUNT_ID-$AWS_REGION" -reconfigure
+  -backend-config="bucket=$ENV-eks-tfstate-$AWS_ACCOUNT_ID-$AWS_REGION" -reconfigure
 
-  terraform plan -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV" -var="ami_filter_type=$AMI_FILTER_TYPE"
-  terraform apply -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV" -var="ami_filter_type=$AMI_FILTER_TYPE" -auto-approve
+  terraform plan -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV"
+  terraform apply -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV" -auto-approve
 
   cd ../..
 
@@ -258,7 +258,7 @@ function deploy_eks_cluster_autoscaler_resources() {
   sed -i "s/us-east-1/$AWS_REGION/g" config/$ENV-backend-config.config
 
   terraform init -backend-config="config/$ENV-backend-config.config" \
-  -backend-config="bucket=$ENV-tfstate-$AWS_ACCOUNT_ID-$AWS_REGION" -reconfigure
+  -backend-config="bucket=$ENV-eks-tfstate-$AWS_ACCOUNT_ID-$AWS_REGION" -reconfigure
 
   terraform plan -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV"
   terraform apply -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV" -auto-approve
@@ -274,8 +274,9 @@ function deploy_eks_cluster_autoscaler_resources() {
 if [ $EXEC_TYPE == 'apply' ]; then
 
   terraform_backend_deployment
+  s3_bucket_resources_deployment
 
-  PS3="Do you want to deploy EKS VPC resources module? "
+  PS3="Do you want to deploy EKS VPC resources module? The TF outputs referred in EKS Cluster module. "
   select ENABLE in Yes No
   do
     echo "You decision is $ENABLE to deploy EKS VPC resources!"
@@ -299,7 +300,7 @@ if [ $EXEC_TYPE == 'apply' ]; then
   fi
 
 
-  PS3="Do you want to deploy EKS Access Config? It will update aws-auth config file, and creates EKS Admin host."
+  PS3="Do you want to deploy EKS Access Config? It will update aws-auth config file, and creates EKS Admin host. "
   select ENABLE in Yes No
   do
     echo "You decision is $ENABLE to deploy EKS Config resources!"
@@ -310,41 +311,41 @@ if [ $EXEC_TYPE == 'apply' ]; then
     deploy_eks_access_config
   fi
 
-
-  PS3="Do you want to deploy EKS IRSA resources? It will create Service Account and IAM Role"
-  select ENABLE in Yes No
-  do
-    echo "You decision is $ENABLE to deploy EKS Config resources!"
-    break
-  done
-
-  if [ $ENABLE == 'Yes' ]; then
-    deploy_eks_irsa_resources
-  fi
-
-
-  PS3="Do you want to deploy EKS Container Insights resources? It will create PODs in the Cluster"
-  select ENABLE in Yes No
-  do
-    echo "You decision is $ENABLE to deploy EKS Container Insights resources!"
-    break
-  done
-
-  if [ $ENABLE == 'Yes' ]; then
-    deploy_eks_container_insights_resources
-  fi
-
-
-    PS3="Do you want to deploy EKS Cluster Autoscaler resources? It will create PODs in the Cluster"
-  select ENABLE in Yes No
-  do
-    echo "You decision is $ENABLE to deploy EKS Cluster Autoscaler resources!"
-    break
-  done
-
-  if [ $ENABLE == 'Yes' ]; then
-    deploy_eks_cluster_autoscaler_resources
-  fi
+#
+#  PS3="Do you want to deploy EKS IRSA resources? It will create Service Account and IAM Role"
+#  select ENABLE in Yes No
+#  do
+#    echo "You decision is $ENABLE to deploy EKS Config resources!"
+#    break
+#  done
+#
+#  if [ $ENABLE == 'Yes' ]; then
+#    deploy_eks_irsa_resources
+#  fi
+#
+#
+#  PS3="Do you want to deploy EKS Container Insights resources? It will create PODs in the Cluster"
+#  select ENABLE in Yes No
+#  do
+#    echo "You decision is $ENABLE to deploy EKS Container Insights resources!"
+#    break
+#  done
+#
+#  if [ $ENABLE == 'Yes' ]; then
+#    deploy_eks_container_insights_resources
+#  fi
+#
+#
+#    PS3="Do you want to deploy EKS Cluster Autoscaler resources? It will create PODs in the Cluster"
+#  select ENABLE in Yes No
+#  do
+#    echo "You decision is $ENABLE to deploy EKS Cluster Autoscaler resources!"
+#    break
+#  done
+#
+#  if [ $ENABLE == 'Yes' ]; then
+#    deploy_eks_cluster_autoscaler_resources
+#  fi
 
 
 fi
@@ -353,14 +354,66 @@ fi
 
 if [ $EXEC_TYPE == 'destroy' ]; then
 
-  echo -e "\n\n ========================= Destroying Backend TF Resources =============================="
-  cd aws-terraform-backend
+  echo -e "\n\n ============================ Destroying EKS Access Config Resources ========================="
+  cd deployment/eks-access-config
+
+  terraform init -backend-config="config/$ENV-backend-config.config" \
+  -backend-config="bucket=$ENV-eks-tfstate-$AWS_ACCOUNT_ID-$AWS_REGION" -reconfigure
+
+  terraform destroy -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV" -var="ami_filter_type=$AMI_FILTER_TYPE" -auto-approve
+  cd ../..
+
+
+  echo -e "\n\n ============================ Destroying EKS Cluster Resources ========================="
+  cd deployment/eks-cluster
+
+  terraform init -backend-config="config/$ENV-backend-config.config" \
+  -backend-config="bucket=$ENV-eks-tfstate-$AWS_ACCOUNT_ID-$AWS_REGION" -reconfigure
+
   terraform destroy -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV" -auto-approve
-  cd ..
+  cd ../..
+
+
+  echo -e "\n\n ============================ Destroying EKS VPC Network Resources ========================="
+  cd deployment/eks-vpc
+
+  terraform init -backend-config="config/$ENV-backend-config.config" \
+  -backend-config="bucket=$ENV-eks-tfstate-$AWS_ACCOUNT_ID-$AWS_REGION" -reconfigure
+
+  terraform destroy -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV" -auto-approve
+  cd ../..
+
+
+
+  echo -e "\n\n ========================= Destroying S3 Resources ====================================="
+  cd deployment/s3-buckets
+
+  terraform init -backend-config="config/$ENV-backend-config.config" \
+  -backend-config="bucket=$ENV-eks-tfstate-$AWS_ACCOUNT_ID-$AWS_REGION" -reconfigure
+
+  terraform destroy -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV" -auto-approve
+  cd ../..
+
+
+  PS3="Do you want to destroy TF backend resources as well? "
+
+  select DESTROY_BACKEND in Yes No
+  do
+      echo "Your input is $DESTROY_BACKEND"
+      break
+  done
+
+  if [ $DESTROY_BACKEND == 'Yes' ]; then
+    echo -e "\n\n ========================= Destroying Backend TF Resources =============================="
+    cd aws-eks-tf-backend
+    terraform init -reconfigure
+    terraform destroy -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV" -auto-approve
+    cd ..
+  fi
   
   
   echo -e "\n\n ========================= =============================== =============================="
-  PS3="Do you want to deregister & delete Bastion & ECS AMI which we create using Packer? Select by inserting the number: "
+  PS3="Do you want to deregister & delete EKS Admin Host AMI which we create using Packer? Select by inserting the number: "
 
   select AMI_DELETE_FLAG in Yes No
   do
@@ -370,17 +423,17 @@ if [ $EXEC_TYPE == 'destroy' ]; then
   
   if [ $AMI_DELETE_FLAG=='Yes' ] && [ $AMI_FILTER_TYPE=='self' ]; then
 
-      ECS_AMI_ID=$(aws ec2 describe-images --filters "Name=tag:Name,Values=ECS-AMI" --query 'Images[*].ImageId' --region $AWS_REGION --profile default --output text)
+      EKS_ADMIN_AMI_ID=$(aws ec2 describe-images --filters "Name=tag:Name,Values=EKS-Admin-Host-AMI" --query 'Images[*].ImageId' --region $AWS_REGION --profile default --output text)
 
-      if [ ! -z $ECS_AMI_ID ]; then
-        aws ec2 deregister-image --image-id $ECS_AMI_ID --region $AWS_REGION
+      if [ ! -z $EKS_ADMIN_AMI_ID]; then
+        aws ec2 deregister-image --image-id $EKS_ADMIN_AMI_ID --region $AWS_REGION
 
-        ECS_SNAPSHOT=$(aws ec2 describe-snapshots --owner-ids self --filters Name=tag:Name,Values=ECS-AMI --query "Snapshots[*].SnapshotId" --output text --region $AWS_REGION)
+        EKS_SNAPSHOT=$(aws ec2 describe-snapshots --owner-ids self --filters Name=tag:Name,Values=EKS-Admin-Host-AMI --query "Snapshots[*].SnapshotId" --output text --region $AWS_REGION)
 
-        for ID in $ECS_SNAPSHOT;
+        for ID in $EKS_SNAPSHOT;
         do
           aws ec2 delete-snapshot --snapshot-id $ID --region $AWS_REGION
-          echo ======================== ECS AMI Deleted Successfully ======================================
+          echo ======================== EKS AMI Deleted Successfully ======================================
         done
       fi
 
