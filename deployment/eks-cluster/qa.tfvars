@@ -14,7 +14,8 @@ common_tags = {
 
 
 vpc_cidr        = null
-subnets         = []
+pvt_subnet_ids = []
+pub_subnet_ids = []
 launch_template = {}
 ssh_public_key  = ""
 ssh_source_sg   = null
