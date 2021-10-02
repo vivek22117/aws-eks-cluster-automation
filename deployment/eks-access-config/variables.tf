@@ -178,3 +178,9 @@ variable "configmap_auth_file" {
   description = "Path to `configmap_auth_file`"
 }
 
+variable "eks_creator_role" {
+  type = string
+  description = "IAM role used to create EKS Resources"
+}
+
+
