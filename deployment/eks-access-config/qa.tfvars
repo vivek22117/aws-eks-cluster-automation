@@ -25,3 +25,4 @@ map_additional_iam_users    = []
 kubeconfig_path              = "~/.kube/config"
 configmap_auth_template_file = ""
 configmap_auth_file          = ""
+eks_creator_role = "AWSInfrastructureAdministratorRole"
