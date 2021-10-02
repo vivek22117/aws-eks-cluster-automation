@@ -2,7 +2,7 @@
 #        EKS-VPC module implementation             #
 ####################################################
 module "eks-vpc" {
-  source = "../../aws-eks-tf-modules/module.eks-nodes-vpc"
+  source = "../../aws-eks-tf-modules/module.eks-vpc-network"
 
   environment    = var.environment
   default_region = var.default_region
