@@ -37,4 +37,6 @@ module "eks_access_infra" {
   configmap_auth_file          = var.configmap_auth_file
 
   ami_filter_type = var.ami_filter_type
+  kubectl_version = var.kubectl_version
+  terraform_version = var.terraform_version
 }

@@ -25,4 +25,7 @@ map_additional_iam_users    = []
 kubeconfig_path              = "~/.kube/config"
 configmap_auth_template_file = ""
 configmap_auth_file          = ""
+
+kubectl_version = "1.20.4"
+terraform_version = "1.0.6"
 eks_creator_role = "AWSInfrastructureAdministratorRole"
