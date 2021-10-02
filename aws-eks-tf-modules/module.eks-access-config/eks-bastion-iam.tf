@@ -1,5 +1,5 @@
-resource "aws_iam_role" "bastion_host_role" {
-  name = "BastionHostEC2RoleForEKS"
+resource "aws_iam_role" "eks_admin_host_role" {
+  name = "EKSAdminHostEC2Role"
   path = "/"
 
   assume_role_policy = <<EOF
@@ -21,8 +21,8 @@ EOF
 }
 
 
-resource "aws_iam_policy" "bastion_host_policy" {
-  name        = "BastionHostEC2PolicyForEKS"
+resource "aws_iam_policy" "eks_admin_host_policy" {
+  name        = "EKSAdminHostEC2Policy"
   description = "Policy to access AWS Resources"
   path        = "/"
 
@@ -102,7 +102,10 @@ resource "aws_iam_policy" "bastion_host_policy" {
             "Action": [
                 "sts:AssumeRole"
             ],
-            "Resource": "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/eks-creator"
+            "Resource": [
+                "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/eks-creator",
+                "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/*",
+            ]
         }
     ]
 }
@@ -110,13 +113,13 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "ec2_policy_role_attach" {
-  policy_arn = aws_iam_policy.bastion_host_policy.arn
-  role       = aws_iam_role.bastion_host_role.name
+  policy_arn = aws_iam_policy.eks_admin_host_policy.arn
+  role       = aws_iam_role.eks_admin_host_role.name
 }
 
 resource "aws_iam_instance_profile" "bastion_host_profile" {
-  name = "BastionHostInstanceProfileForEKS"
-  role = aws_iam_role.bastion_host_role.name
+  name = "EKSAdminHostInstanceProfile"
+  role = aws_iam_role.eks_admin_host_role.name
 
   lifecycle {
     create_before_destroy = true
