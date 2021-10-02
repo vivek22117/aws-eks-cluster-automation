@@ -183,4 +183,13 @@ variable "eks_creator_role" {
   description = "IAM role used to create EKS Resources"
 }
 
+variable "kubectl_version" {
+  type = string
+  description = "Kubectl version to install in EKS admin host machine"
+}
+
+variable "terraform_version" {
+  type = string
+  description = "Terraform version to install in EKS admin host machine"
+}
 
