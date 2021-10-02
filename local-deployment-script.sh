@@ -63,7 +63,7 @@ do
 done
 
 
-echo -e "\n\n ======================= Choose AMI Type To Create EC2 =================================="
+echo -e "\n\n ======================= Choose AMI Type To EKS Administrator Machine =================================="
 
 PS3="Select ami filter type: "
 
@@ -84,7 +84,7 @@ done
 function terraform_backend_deployment() {
     echo -e "\n\n==================== Starting Terraform Backend Deployment ========================="
 
-    cd aws-terraform-backend
+    cd aws-eks-tf-backend
 
     sed -i '/profile/s/^#//g' providers.tf
     sed -i '/backend/,+4d' providers.tf
@@ -101,6 +101,50 @@ function terraform_backend_deployment() {
 
 
 function deploy_eks_vpc_network() {
+    echo -e "\n\n ========================= Starting EKS vpc network deployment using TF ====================="
+
+    cd deployment/eks-vpc
+
+    sed -i '/profile/s/^#//g' providers.tf
+    sed -i "s/us-east-1/$AWS_REGION/g" providers.tf
+    sed -i "s/us-east-1/$AWS_REGION/g" config/$ENV-backend-config.config
+
+    terraform init -backend-config="config/$ENV-backend-config.config" \
+    -backend-config="bucket=$ENV-eks-tfstate-$AWS_ACCOUNT_ID-$AWS_REGION" -reconfigure
+
+    terraform plan -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV"
+    terraform apply -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV" -auto-approve
+
+    cd ../..
+
+    echo -e "============================== Completed ================================================ \n\n"
+}
+
+
+function deploy_eks_cluster_resources() {
+
+  echo -e "\n\n ========================= Starting EKS cluster deployment using TF ====================="
+
+  cd deployment/eks-cluster
+
+  sed -i '/profile/s/^#//g' providers.tf
+  sed -i "s/us-east-1/$AWS_REGION/g" providers.tf
+  sed -i "s/us-east-1/$AWS_REGION/g" config/$ENV-backend-config.config
+
+  terraform init -backend-config="config/$ENV-backend-config.config" \
+  -backend-config="bucket=$ENV-eks-tfstate-$AWS_ACCOUNT_ID-$AWS_REGION" -reconfigure
+
+  terraform plan -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV"
+  terraform apply -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV" -auto-approve
+
+  cd ../..
+
+  echo -e "============================== Completed ================================================ \n\n"
+}
+
+
+
+function deploy_eks_access_config() {
 
   if [ $AMI_FILTER_TYPE == 'self' ]; then
     echo -e "You have decided to create AMI for EKS Administration Host."
@@ -110,7 +154,7 @@ function deploy_eks_vpc_network() {
     EKS_ADMIN_AMI_ID=$(aws ec2 describe-images --filters "Name=tag:Name,Values=EKS-Admin-Host-AMI" --query 'Images[*].ImageId' --region $AWS_REGION --profile default --output text)
 
     if [ -z $EKS_ADMIN_AMI_ID ]; then
-      echo "Creating AMI named eks-admin--YYYY-MM-DD using packer as it is being used in Terraform script"
+      echo "Creating AMI named eks-admin-YYYY-MM-DD using packer as it is being used in Terraform script"
 
       cd packer/eks-admin-host
       packer validate eks-admin-host-template.json
@@ -121,51 +165,6 @@ function deploy_eks_vpc_network() {
     fi
 
   fi
-
-
-    echo -e "\n\n ========================= Starting EKS vpc network deployment using TF ====================="
-
-    cd deployment/eks-vpc
-
-    sed -i '/profile/s/^#//g' providers.tf
-    sed -i "s/us-east-1/$AWS_REGION/g" providers.tf
-    sed -i "s/us-east-1/$AWS_REGION/g" config/$ENV-backend-config.config
-
-    terraform init -backend-config="config/$ENV-backend-config.config" \
-    -backend-config="bucket=$ENV-tfstate-$AWS_ACCOUNT_ID-$AWS_REGION" -reconfigure
-
-    terraform plan -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV" -var="ami_filter_type=$AMI_FILTER_TYPE"
-    terraform apply -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV" -var="ami_filter_type=$AMI_FILTER_TYPE" -auto-approve
-
-    cd ../..
-
-    echo -e "============================== Completed ================================================ \n\n"
-}
-
-
-function deploy_eks_cluster_resources() {
-  echo -e "\n\n ========================= Starting EKS cluster deployment using TF ====================="
-
-  cd deployment/eks-cluster
-
-  sed -i '/profile/s/^#//g' providers.tf
-  sed -i "s/us-east-1/$AWS_REGION/g" providers.tf
-  sed -i "s/us-east-1/$AWS_REGION/g" config/$ENV-backend-config.config
-
-  terraform init -backend-config="config/$ENV-backend-config.config" \
-  -backend-config="bucket=$ENV-tfstate-$AWS_ACCOUNT_ID-$AWS_REGION" -reconfigure
-
-  terraform plan -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV" -var="ami_filter_type=$AMI_FILTER_TYPE"
-  terraform apply -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV" -var="ami_filter_type=$AMI_FILTER_TYPE" -auto-approve
-
-  cd ../..
-
-  echo -e "============================== Completed ================================================ \n\n"
-}
-
-
-
-function deploy_eks_access_config() {
   echo -e "\n\n ========================= Starting EKS access config deployment using TF ====================="
 
   cd deployment/eks-access-config
