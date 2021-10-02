@@ -5,7 +5,7 @@ resource "aws_launch_template" "eks_bastion_lt" {
   name_prefix = "${var.eks_bastion_name_prefix}${var.environment}"
 
   image_id                             = data.aws_ami.eks_admin_host.id
-  key_name                             = data.terraform_remote_state.s3_buckets.outputs.eks_bastion_key_name
+  key_name                             = data.terraform_remote_state.eks_cluster.outputs.ssh_keypair_name
   instance_type                        = var.bastion_instance_type
   instance_initiated_shutdown_behavior = "terminate"
 

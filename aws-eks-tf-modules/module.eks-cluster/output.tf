@@ -58,3 +58,7 @@ output "eks_cluster_sg_id" {
 output "worker_node_ssh_key" {
   value = tls_private_key.eks_admin_host_ssh_data.public_key_openssh
 }
+
+output "ssh_keypair_name" {
+  value = aws_key_pair.ssh_key.key_name
+}

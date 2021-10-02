@@ -60,3 +60,7 @@ output "eks_cluster_sg_id" {
 output "worker_node_ssh_key" {
   value = module.eks-vpc.worker_node_ssh_key
 }
+
+output "ssh_keypair_name" {
+  value = module.eks-vpc.ssh_keypair_name
+}
