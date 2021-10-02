@@ -2,7 +2,7 @@
 #        S3 Buckets Module Implementation          #
 ####################################################
 module "s3_resources" {
-  source = "../../aws-tf-modules/module.aws-s3-buckets"
+  source = "../../aws-eks-tf-modules/module.aws-s3-buckets"
 
   default_region = var.default_region
 
