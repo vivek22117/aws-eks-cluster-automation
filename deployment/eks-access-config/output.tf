@@ -14,3 +14,9 @@ output "eks_full_access_role" {
 output "eks_user_management_group" {
   value = module.eks_access_infra.eks_user_management_group
 }
+
+
+output "eks_aws_auth_config" {
+  value = module.eks_access_infra.eks_aws_auth_config
+}
+

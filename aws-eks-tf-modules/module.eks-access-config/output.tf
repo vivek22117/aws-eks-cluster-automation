@@ -14,3 +14,7 @@ output "eks_full_access_role" {
 output "eks_user_management_group" {
   value = aws_iam_group.eks_access_group.name
 }
+
+output "eks_aws_auth_config" {
+  value = join("", data.template_file.configmap_auth.*.rendered)
+}
