@@ -13,8 +13,12 @@ common_tags = {
 }
 
 
-vpc_cidr        = null
-subnets         = []
+#####=======Please provide below values to use already available VPC for EKS NodeGroup/Workers=========#####
+vpc_cidr       = null
+pvt_subnet_ids = []
+pub_subnet_ids = []
+#####===================================================================================================#####
+
 launch_template = {}
 ssh_public_key  = ""
 ssh_source_sg   = null
