@@ -23,7 +23,7 @@ module "eks_access_infra" {
   eks_bastion_asg_min_size         = var.eks_bastion_asg_min_size
   termination_policies             = var.termination_policies
 
-  eks_iam_group = var.eks_iam_group
+  eks_iam_group    = var.eks_iam_group
   eks_creator_role = var.eks_creator_role
 
 
@@ -36,7 +36,7 @@ module "eks_access_infra" {
   configmap_auth_template_file = var.configmap_auth_template_file
   configmap_auth_file          = var.configmap_auth_file
 
-  ami_filter_type = var.ami_filter_type
-  kubectl_version = var.kubectl_version
+  ami_filter_type   = var.ami_filter_type
+  kubectl_version   = var.kubectl_version
   terraform_version = var.terraform_version
 }
