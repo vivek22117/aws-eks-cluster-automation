@@ -11,7 +11,7 @@ variable "default_region" {
 #              Variables for EKS Bastion                #
 #########################################################
 variable "ami_filter_type" {
-  type = string
+  type        = string
   description = "AMI filter type, valid values 'self', 'amazon'"
 }
 
@@ -178,16 +178,16 @@ variable "configmap_auth_file" {
 }
 
 variable "eks_creator_role" {
-  type = string
+  type        = string
   description = "IAM role used to create EKS Resources"
 }
 
 variable "kubectl_version" {
-  type = string
+  type        = string
   description = "Kubectl version to install in EKS admin host machine"
 }
 
 variable "terraform_version" {
-  type = string
+  type        = string
   description = "Terraform version to install in EKS admin host machine"
 }
