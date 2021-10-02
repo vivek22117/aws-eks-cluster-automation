@@ -99,6 +99,26 @@ function terraform_backend_deployment() {
 }
 
 
+function s3_bucket_resources_deployment() {
+    echo -e "\n\n===================== Starting S3 Bucket Resource Deployment ========================="
+
+    cd deployment/s3-buckets
+
+    sed -i '/profile/s/^#//g' providers.tf
+    sed -i "s/us-east-1/$AWS_REGION/g" providers.tf
+    sed -i "s/us-east-1/$AWS_REGION/g" config/$ENV-backend-config.config
+
+    terraform init -backend-config="config/$ENV-backend-config.config" \
+    -backend-config="bucket=$ENV-eks-tfstate-$AWS_ACCOUNT_ID-$AWS_REGION" -reconfigure
+
+    terraform plan -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION"
+    terraform apply -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -auto-approve
+
+    cd ../..
+
+    echo -e "============================== Completed =============================================== \n\n"
+}
+
 
 function deploy_eks_vpc_network() {
     echo -e "\n\n ========================= Starting EKS vpc network deployment using TF ====================="
@@ -161,7 +181,7 @@ function deploy_eks_access_config() {
       packer build -var "aws_profile=default" -var "default_region=$AWS_REGION"  -var "terraform_version=1.0.6" -var "kubectl_version=1.20.4" eks-admin-host-template.json
       cd ../..
     else
-      echo "AMI exits with id $EKS_ADMIN_AMI_ID, now creating VPC resources.."
+      echo "AMI exits with id $EKS_ADMIN_AMI_ID, now creating EKS access resources.."
     fi
 
   fi
@@ -174,7 +194,7 @@ function deploy_eks_access_config() {
   sed -i "s/us-east-1/$AWS_REGION/g" config/$ENV-backend-config.config
 
   terraform init -backend-config="config/$ENV-backend-config.config" \
-  -backend-config="bucket=$ENV-tfstate-$AWS_ACCOUNT_ID-$AWS_REGION" -reconfigure
+  -backend-config="bucket=$ENV-eks-tfstate-$AWS_ACCOUNT_ID-$AWS_REGION" -reconfigure
 
   terraform plan -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV" -var="ami_filter_type=$AMI_FILTER_TYPE"
   terraform apply -var-file="$ENV.tfvars" -var="default_region=$AWS_REGION" -var="environment=$ENV" -var="ami_filter_type=$AMI_FILTER_TYPE" -auto-approve
