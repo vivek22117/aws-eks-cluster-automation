@@ -24,6 +24,7 @@ locals {
   }
 }
 
+
 data "aws_iam_policy_document" "role" {
   count = var.enabled ? 1 : 0
 
