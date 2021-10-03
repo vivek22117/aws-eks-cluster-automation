@@ -36,9 +36,11 @@ jobs:
         run: echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
         id: extract_branch
 
+
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
         uses: actions/checkout@v2
+
 
       #  Configure AWS Credentials using IAM Role in the GitHub secrets
       - name: AWS IAM Assume Role
@@ -48,6 +50,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.aws_region }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+
 
       - name: Run aws cli to fetch Account Id
         id: aws_details
@@ -61,6 +64,7 @@ jobs:
       # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
+
 
       - name: Terraform Init For EKS Cluster Autoscaler Resources
         uses: hashicorp/terraform-github-actions@master
