@@ -40,19 +40,6 @@ variable "component" {
   description = "Component name for the resource"
 }
 
-
-#####=============Local variables===============#####
-locals {
-  common_tags = {
-    Owner       = var.owner
-    Team        = var.team
-    Environment = var.environment
-    Monitoring  = var.isMonitoring
-    Project     = var.project
-    Component   = var.component
-  }
-}
-
 #####========================IRSA Config Variables====================#####
 variable "enabled" {
   type        = bool
