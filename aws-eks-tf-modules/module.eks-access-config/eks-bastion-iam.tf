@@ -104,7 +104,7 @@ resource "aws_iam_policy" "eks_admin_host_policy" {
             ],
             "Resource": [
                 "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/eks-creator",
-                "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/*",
+                "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/*"
             ]
         }
     ]
