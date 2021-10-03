@@ -11,7 +11,8 @@ resource "random_string" "autoscaler_suffix" {
 
 locals {
   suffix = var.enabled ? random_string.autoscaler_suffix.0.result : ""
-  name   = join("-", compact([var.cluster_name, "cluster-autoscaler", local.suffix]))
+  cluster_name = var.cluster_name == "" ? data.terraform_remote_state.eks_cluster.outputs.eks_cluster_id : var.cluster_name
+  name   = join("-", compact([local.cluster_name, "cluster-autoscaler", local.suffix]))
 
   namespace       = lookup(var.helm, "namespace", "kube-system")
   service_account = lookup(var.helm, "service_account", "cluster-autoscaler")
@@ -57,7 +58,7 @@ resource "helm_release" "cluster_autoscaler" {
 
   dynamic "set" {
     for_each = {
-      "autoDiscovery.clusterName"                                 = var.cluster_name
+      "autoDiscovery.clusterName"                                 = local.cluster_name
       "serviceAccount.name"                                       = local.service_account
       "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn" = module.cluster_autoscaler_irsa[0].arn[0]
     }
