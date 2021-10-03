@@ -36,9 +36,11 @@ jobs:
         run: echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
         id: extract_branch
 
+
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
         uses: actions/checkout@v2
+
 
       #  Configure AWS Credentials using IAM Role in the GitHub secrets
       - name: AWS IAM Assume Role
@@ -49,6 +51,7 @@ jobs:
           aws-region: ${{ env.aws_region }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
 
+
       - name: Run aws cli to fetch Account Id
         id: aws_details
         run: |
@@ -57,9 +60,11 @@ jobs:
           CURRENT_REGION=$(aws ec2 describe-availability-zones --query 'AvailabilityZones[0].[RegionName]' --output text)
           echo AWS_REGION=$CURRENT_REGION >> $GITHUB_ENV
 
+
       # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
+
 
       - name: Terraform Init For EKS VPC Resources
         uses: hashicorp/terraform-github-actions@master
@@ -79,6 +84,7 @@ jobs:
           tf_actions_working_dir: ${{ env.tf_working_dir_app }}
           tf_actions_comment: false
 
+
       - name: Terraform Plan EKS VPC Resources
         if: github.event.inputs.action == 'Create'
         id: app-plan
@@ -89,6 +95,7 @@ jobs:
           tf_actions_comment: false
           tf_actions_subcommand: 'plan'
           args: '-var="environment=${{ env.environment }}" -var-file="${{ env.environment }}.tfvars"'
+
 
       - name: Terraform Apply For EKS VPC Resources
         if: steps.app-plan.outputs.tf_actions_plan_has_changes == 'true' && github.event.inputs.action == 'Create'
