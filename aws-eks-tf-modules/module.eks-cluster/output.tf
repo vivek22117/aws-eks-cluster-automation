@@ -62,3 +62,19 @@ output "worker_node_ssh_key" {
 output "ssh_keypair_name" {
   value = aws_key_pair.ssh_key.key_name
 }
+
+
+data "aws_eks_cluster_auth" "cluster_auth" {
+  name = aws_eks_cluster.learning_eks_cluster.name
+}
+
+
+output "helm_config" {
+  description = "The configurations map for Helm provider"
+  sensitive   = true
+  value = {
+    host  = aws_eks_cluster.learning_eks_cluster.endpoint
+    token = data.aws_eks_cluster_auth.cluster_auth.token
+    ca    = aws_eks_cluster.learning_eks_cluster.certificate_authority
+  }
+}
