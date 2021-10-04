@@ -23,22 +23,11 @@ data "terraform_remote_state" "eks_cluster" {
   }
 }
 
-provider "kubernetes" {
-  load_config_file         = "false"
-  host                     = data.terraform_remote_state.eks_cluster.outputs.eks_cluster_endpoint
-  cluster_ca_certificate   = base64decode(data.terraform_remote_state.eks_cluster.outputs.eks_cluster_certificate_authority[0]["data"])
-  config_context_auth_info = "aws"
-  config_context_cluster   = "kubernetes"
-  exec {
-    api_version = "client.authentication.k8s.io/v1alpha1"
-    command     = "aws-iam-authenticator"
-    args = [
-      "token",
-      "-i",
-      data.terraform_remote_state.eks_cluster.outputs.eks_cluster_id,
-      "-r",
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/AWSInfrastructureAdministratorRole"
-    ]
+provider "helm" {
+  kubernetes {
+    host                   = data.terraform_remote_state.eks_cluster.outputs.helm_config.host
+    token                  = data.terraform_remote_state.eks_cluster.outputs.helm_config.token
+    cluster_ca_certificate = base64decode(data.terraform_remote_state.eks_cluster.outputs.helm_config.ca)
   }
 }
 
