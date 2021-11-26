@@ -56,6 +56,7 @@ jobs:
           echo AWS_ACCOUNT=$ACCOUNT_ID >> $GITHUB_ENV
           CURRENT_REGION=$(aws ec2 describe-availability-zones --query 'AvailabilityZones[0].[RegionName]' --output text)
           echo AWS_REGION=$CURRENT_REGION >> $GITHUB_ENV
+          aws eks update-kubeconfig --region $CURRENT_REGION --name aws-vpc --role arn:aws:iam::<account_id>:role/<name>
 
 
       # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
