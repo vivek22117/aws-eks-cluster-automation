@@ -7,6 +7,17 @@
     "profile" : "{{user `aws_profile`}}",
     "region" : "{{user `default_region`}}",
     "instance_type" : "t3a.small",
+    "vpc_filter": {
+      "filters": {
+        "tag:Name": "vpc-qa-10.0.0.0/20",
+        "isDefault": "false"
+      }
+    },
+    "subnet_filter": {
+      "filters": {
+        "tag:Name": "publicSubnet-qa-us-east-1a"
+      }
+    },
     "source_ami_filter": {
       "filters": {
         "virtualization-type": "hvm",
