@@ -43,6 +43,8 @@ resource "aws_eks_cluster" "learning_eks_cluster" {
     security_group_ids      = [aws_security_group.eks_cluster.id, aws_security_group.eks_nodes_sg.id]
     endpoint_private_access = var.enable_private_access
     endpoint_public_access  = var.enable_public_access
+//    We can dedicate two subnets with /28 for EKS ENI deployment, and create different subnets to launch Node Group
+//    (Dedicated subnets for Control Plane)
     subnet_ids              = local.eks_subnets
     public_access_cidrs     = var.cluster_endpoint_public_access_cidrs
   }
